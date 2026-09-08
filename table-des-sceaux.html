@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>.</title>
+<style>
+  html,body{height:100%;margin:0;background:#050403;overflow:hidden}
+  body{font-family:Consolas,'Courier New',monospace;color:#d4af37}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(ellipse at 50% 42%,transparent 55%,rgba(0,0,0,.78) 100%)}
+  #screen{position:absolute;inset:0;padding:7vh 8vw;box-sizing:border-box;
+    display:flex;flex-direction:column;align-items:center}
+  .mast{letter-spacing:.34em;font-size:20px;color:#f0d78c;
+    text-shadow:0 0 8px rgba(212,175,55,.4)}
+  .lore{margin-top:1.6vh;font-size:12.5px;color:#8a7332;letter-spacing:.14em;
+    line-height:1.9;text-align:center}
+  #codebox{margin-top:5vh;text-align:center;display:none;opacity:1;
+    transition:opacity .6s ease}
+  #codebox.fading{opacity:0}
+  #codebox .step{font-size:12px;color:#8a7332;letter-spacing:.3em}
+  #codebox .digits{font-size:64px;letter-spacing:.42em;color:#f0d78c;
+    text-shadow:0 0 18px rgba(212,175,55,.55);margin:1.4vh 0 1vh;text-indent:.42em}
+  #codebox .say{font-size:13px;color:#d4af37;letter-spacing:.18em}
+  #log{width:100%;max-width:640px;margin-top:4vh;flex:1;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:flex-start;
+    white-space:pre-wrap;line-height:1.7;font-size:15px;letter-spacing:.06em;
+    text-shadow:0 0 6px rgba(212,175,55,.3)}
+  #log .dim{color:#8a7332}
+  #inline{display:none;font-size:17px;letter-spacing:.06em;margin-top:2vh}
+  #inline .pr{color:#8a7332;margin-right:10px}
+  #ghost{position:absolute;left:-9999px}
+  #caret{display:inline-block;width:10px;height:20px;background:#d4af37;
+    vertical-align:text-bottom;animation:bl 1.05s steps(1) infinite}
+  @keyframes bl{50%{opacity:0}}
+  .fin{font-size:19px;letter-spacing:.28em;color:#f0d78c;text-align:center;
+    text-shadow:0 0 10px rgba(212,175,55,.6);margin-top:3vh}
+</style>
+</head>
+<body>
+<div class="scan"></div><div class="vig"></div>
+<div id="screen">
+  <div class="mast">TABLE DES SCEAUX</div>
+  <div class="lore">UN MOT TROUVÉ FERME UNE ÉTAPE.<br>LE CONSORTIUM LE TRANSFORME EN CODE.<br>LE GARDIEN SEUL CONNAÎT LA SUITE.</div>
+  <div id="codebox">
+    <div class="step" id="cbstep"></div>
+    <div class="digits" id="cbdigits"></div>
+    <div class="say">COMMUNIQUEZ CE CODE AU GARDIEN — IL NE RESTERA PAS.</div>
+  </div>
+  <div id="log"></div>
+  <div id="inline"><span class="pr">&gt;</span><span id="typed"></span><span id="caret"></span></div>
+</div>
+<input id="ghost" autocomplete="off" spellcheck="false">
+<!-- La cire n'oublie pas. -->
+<script>
+var K=0x5A;
+function D(h){var s="";for(var i=0;i<h.length;i+=4){s+=String.fromCharCode(parseInt(h.substr(i,4),16)^K);}return s;}
+function N(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().trim();}
+var PAIRS=[["000e0008001300150017000a0012001f","006d0069006a006b"],
+    ["000e00030008001b00140009","006e00620068006c"],
+    ["0015001700180008001f","0063006b006f006d"],
+    ["00090013001d0014001f","0068006c006e0062"],
+    ["001b00160016001f0016001f","006f006200690063"],
+    ["001900130014001f0017001b","00620068006b006e"],
+    ["001c000f0009001300150014","006b006e006c0068"],
+    ["001f0017000a00130008001f","00690063006d006f"],
+    ["00150014001e001f","006c006f00630062"],
+    ["001e001f001900120013001c001c0008001f","00680062006e006a"]];
+var REF=["LA TABLE RESTE MUETTE.", "CE MOT N'OUVRE RIEN.", "LE CONSORTIUM ATTEND.", "ENCORE."];
+var ROMAN=["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+var ri=0;
+var hideTimer=null;
+function armHide(){
+  if(hideTimer){clearTimeout(hideTimer);}
+  box.classList.remove("fading");
+  hideTimer=setTimeout(function(){
+    box.classList.add("fading");
+    setTimeout(function(){
+      box.style.display="none";
+      line("LA CIRE SE REFERME.","dim");
+    },650);
+  },10000);
+}
+var log=document.getElementById("log"),
+    inl=document.getElementById("inline"),typed=document.getElementById("typed"),
+    ghost=document.getElementById("ghost"),box=document.getElementById("codebox"),
+    cbstep=document.getElementById("cbstep"),cbdigits=document.getElementById("cbdigits");
+function line(t,cls){var d=document.createElement("div");if(cls)d.className=cls;
+  d.textContent=t;log.appendChild(d);}
+function wake(){inl.style.display="block";ghost.focus();}
+document.addEventListener("click",wake);
+ghost.addEventListener("input",function(){typed.textContent=ghost.value.toUpperCase();});
+ghost.addEventListener("keydown",function(e){
+  if(e.key!=="Enter")return;
+  var raw=ghost.value;ghost.value="";typed.textContent="";
+  line("> "+raw.toUpperCase(),"dim");
+  var hit=-1;
+  for(var i=0;i<PAIRS.length;i++){
+    if(D(PAIRS[i][0])===N(raw)){hit=i;break;}
+  }
+  if(hit<0){line(REF[ri++%REF.length]);return;}
+  var code=D(PAIRS[hit][1]);
+  box.style.display="block";
+  cbstep.textContent="SCEAU "+ROMAN[hit];
+  cbdigits.textContent=code;
+  armHide();
+  line("SCEAU "+ROMAN[hit]+" — LA CIRE A PARLÉ.");
+  if(D(PAIRS[hit][0])==="DECHIFFRE"){
+    var f=document.createElement("div");f.className="fin";f.textContent="LE LIVRE DES ORIGINES EST OUVERT.";
+    document.getElementById("screen").insertBefore(f,box.nextSibling);
+  }
+});
+setTimeout(wake,350);
+</script>
+</body>
+</html>

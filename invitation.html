@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.</title>
+<style>
+  html,body{height:100%;margin:0;background:#050403;overflow-x:hidden}
+  body{font-family:Georgia,'Times New Roman',serif;color:#d8c9a4;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:9vw 8vw;box-sizing:border-box;position:relative}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.20) 0 1px,transparent 1px 3px)}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(ellipse at 50% 40%,transparent 52%,rgba(0,0,0,.82) 100%)}
+  .wm{position:absolute;top:5vh;left:50%;transform:translateX(-50%);opacity:.12;pointer-events:none}
+  .wm svg{width:44px;height:52px;color:#d4af37}
+  .brand{letter-spacing:.5em;font-size:11px;color:#8a7332;font-variant:small-caps;
+    margin-bottom:6vh;text-shadow:0 0 12px rgba(212,175,55,.3)}
+  .brand::after{content:"";display:block;width:44px;height:1px;background:rgba(212,175,55,.4);margin:10px auto 0}
+  p{opacity:0;transform:translateY(6px);animation:rv 1.1s ease forwards;animation-delay:var(--d);
+    font-size:16.5px;line-height:1.95;letter-spacing:.045em;margin:0 0 3.2vh;max-width:560px;
+    text-shadow:0 0 8px rgba(0,0,0,.8)}
+  p em{color:#f0d78c;font-style:italic}
+  p .gold{color:#d4af37}
+  @keyframes rv{to{opacity:1;transform:none}}
+  .linkzone{opacity:0;animation:rv 1.2s ease forwards;animation-delay:7.6s;margin-top:1.5vh}
+  .pre{font-size:13px;color:#8a7332;letter-spacing:.22em;font-variant:small-caps;margin-bottom:1.6vh}
+  .link{display:inline-block;font-family:Consolas,'Courier New',monospace;font-size:26px;
+    letter-spacing:.06em;color:#f0d78c;border:1px solid rgba(212,175,55,.55);
+    padding:14px 26px;background:rgba(212,175,55,.05);text-shadow:0 0 10px rgba(212,175,55,.4)}
+  .after{font-size:12.5px;color:#5c5140;letter-spacing:.18em;margin-top:5vh}
+</style>
+</head>
+<body>
+<div class="scan"></div><div class="vig"></div>
+<div class="wm"><svg viewBox="0 0 40 48"><path d="M20 6 L32 24 L20 42 L8 24 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
+
+<div class="brand">Le Consortium Mnémosyne</div>
+
+<p style="--d:.6s">Vous avez scanné ce que d'autres ont ignoré.<br><em>C'est déjà rare.</em></p>
+
+<p style="--d:2.4s">Mais ce téléphone n'est qu'un seuil —<br>et un seuil ne se franchit pas dans une main.</p>
+
+<p style="--d:4.4s">Ce que nous gardons exige <span class="gold">une vraie machine</span> :<br>un ordinateur, un clavier, un écran digne de ce nom.</p>
+
+<p style="--d:6.2s">Dans la salle, trouvez-en un.<br>Puis tapez, lettre après lettre :</p>
+
+<div class="linkzone">
+  <div class="pre">et seulement là</div>
+  <div class="link">bit.ly/mnemosyme</div>
+</div>
+
+<p class="after" style="--d:9.4s">le Consortium vous observe déjà.</p>
+</body>
+</html>
