@@ -71,6 +71,43 @@ var REF=["LA TABLE RESTE MUETTE.", "CE MOT N'OUVRE RIEN.", "LE CONSORTIUM ATTEND
 var ROMAN=["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 var ri=0;
 var hideTimer=null;
+var RAIN={on:false,raf:0,cols:[],W:0,H:0,at:0,fired:false};
+function rainStart(){
+  if(RAIN.on)return;RAIN.on=true;
+  var cv=document.createElement('canvas');cv.id='goldrain';cv.style.cssText=
+    'position:fixed;inset:0;z-index:5;pointer-events:none';
+  document.body.appendChild(cv);
+  var cx=cv.getContext('2d');
+  function fit(){RAIN.W=cv.width=innerWidth;RAIN.H=cv.height=innerHeight;
+    var n=Math.max(14,Math.floor(RAIN.W/95));
+    while(RAIN.cols.length<n)RAIN.cols.push({y:Math.random()*-RAIN.H,v:0.45+Math.random()*1.15,
+      step:0,swap:40+Math.floor(Math.random()*80)});
+    RAIN.cols.length=n;}
+  fit();addEventListener('resize',fit);
+  var GLYPHS=['A','U','T','G','C'].concat(
+    ['\u16a0','\u16a2','\u16a8','\u16b1','\u16aa','\u16c1','\u16a5','\u16b3','\u16a6','\u16d6','\u16a7','\u16a9']);
+  function tick(){
+    cx.fillStyle='rgba(5,4,3,.24)';cx.fillRect(0,0,RAIN.W,RAIN.H);
+    cx.textAlign='center';cx.font='34px Consolas,monospace';
+    for(var i=0;i<RAIN.cols.length;i++){
+      var c=RAIN.cols[i];c.y+=c.v*9;c.step++;
+      if(c.step>c.swap){c.step=0;c.g=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];}
+      var lead=RAIN.H-c.y;
+      if(lead>-60&&lead<RAIN.H+60){
+        var x=(i+.5)*RAIN.W/RAIN.cols.length;
+        cx.fillStyle='#f0d78c';cx.shadowColor='rgba(212,175,55,.8)';cx.shadowBlur=14;
+        cx.fillText(c.g,x,c.y);
+        var y2=c.y-44;
+        if(y2>-60){cx.fillStyle='rgba(212,165,45,.55)';cx.shadowBlur=0;
+          cx.fillText(c.g,x,y2);}
+        cx.shadowBlur=0;
+      }
+      if(c.y>RAIN.H+90)c.y=Math.random()*-400;
+    }
+    RAIN.raf=requestAnimationFrame(tick);
+  }
+  tick();
+}
 function armHide(){
   if(hideTimer){clearTimeout(hideTimer);}
   box.classList.remove("fading");
@@ -109,6 +146,7 @@ ghost.addEventListener("keydown",function(e){
   if(D(PAIRS[hit][0])==="DECHIFFRE"){
     var f=document.createElement("div");f.className="fin";f.textContent="LE LIVRE DES ORIGINES EST OUVERT.";
     document.getElementById("screen").insertBefore(f,box.nextSibling);
+    setTimeout(function(){rainStart();},1200);
   }
 });
 setTimeout(wake,350);
