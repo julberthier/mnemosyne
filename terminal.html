@@ -79,7 +79,7 @@ var ROMAN=["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 var CONF={"DAGU":"LA PREMIÈRE PIERRE EST POSÉE.","EWAZ":"LE FIL S'ALLONGE.","KENA":"L'OMBRE A PARLÉ.","HAGA":"LE SIGNE A ÉTÉ VU.","ISAA":"LE VIVANT CONFIRME.","FEHU":"DOUBLE. COMME LA MAIN QUI DONNE.","RIDO":"LE TERRITOIRE S'OUVRE."};
 var REF=["LE CONSORTIUM ATTEND.", "CECI N'EST PAS LA CLÉ.", "NON.", "LES RUNES RESTENT MUETTES.", "ENCORE."];
 var RUN={"A":["M14 4 V44", "M14 10 L32 18", "M14 26 L32 34"],"B":["M14 4 V44", "M14 8 L30 15 L14 23", "M14 23 L30 30 L14 38"],"C":["M30 8 L13 24 L30 40"],"D":["M8 13 L23 24 L8 35", "M32 13 L17 24 L32 35"],"E":["M10 4 V44", "M30 4 V44", "M10 4 L20 24 L30 4"],"F":["M14 44 V4", "M14 10 L30 4", "M14 22 L30 14"],"G":["M8 12 L32 36", "M32 12 L8 36"],"H":["M20 4 V44", "M8 14 L32 34", "M32 14 L8 34"],"I":["M20 4 V44"],"J":["M11 32 A11 11 0 0 1 29 13", "M29 32 A11 11 0 0 1 11 13"],"K":["M14 4 V44", "M32 4 L14 24 L32 44"],"L":["M16 4 V44", "M16 30 L32 44"],"M":["M10 4 V44", "M30 4 V44", "M10 4 L30 22", "M30 4 L10 22"],"N":["M20 4 V44", "M9 15 L31 33"],"O":["M20 6 L32 24 L20 42 L8 24 Z"],"P":["M14 4 V44", "M14 14 A10 10 0 0 1 14 34"],"Q":["M20 4 V28", "M20 28 A8 8 0 1 0 20 44"],"R":["M14 4 V44", "M14 4 L28 12 L14 22", "M14 22 L30 44"],"S":["M24 4 L14 20 L26 26 L16 44"],"T":["M20 44 V12", "M8 4 L20 16 L32 4"],"U":["M10 40 V16 Q10 6 20 6", "M20 6 Q30 6 30 16 V40"],"V":["M16 4 V44", "M16 8 L32 14 L16 20"],"W":["M24 4 V44", "M24 8 L8 14 L24 20"],"X":["M20 4 V44", "M8 24 H32"],"Y":["M20 44 V18", "M20 18 L8 32", "M20 18 L32 32"],"Z":["M20 44 V18", "M20 18 L8 4", "M20 18 L32 4"]};
-var seen=0, ri=0;
+var seen=0, ri=0, ei=0;
 var RAIN={on:false,raf:0,cols:[],W:0,H:0};
 var GLYPHS=['A','U','T','G','C'].concat(
   ['\u16a0','\u16a2','\u16a8','\u16b1','\u16aa','\u16c1','\u16a5','\u16b3','\u16a6','\u16d6','\u16a7','\u16a9']);
@@ -127,6 +127,7 @@ function merci(){
   document.body.appendChild(d);
   setTimeout(function(){d.classList.add('show');},80);
 }
+var EARLY=["LE DERNIER FILM N'A PAS ENCORE ÉTÉ TROUVÉ.", "LA BOBINE FINALE MANQUE À L'APPEL.", "REVENEZ AVEC TOUT. OU RIEN."];
 function codeOf(w){for(var i=0;i<CODES.length;i++){if(D(CODES[i][0])===w)return D(CODES[i][1]);}return null;}
 function romanOf(w){for(var i=0;i<CODES.length;i++){if(D(CODES[i][0])===w)return ROMAN[i];}return "";}
 function runeRow(word){
@@ -166,7 +167,11 @@ ghost.addEventListener("keydown",function(e){
     if(D(PAIRS[i][0])===word_norm){hit=D(PAIRS[i][1]);break;}
   }
   if(hit===null){line(REF[ri++%REF.length]);return;}
-  if(hit===""){finale();return;}
+  if(hit==="")
+  {
+    if(seen<9){line(EARLY[ei++%EARLY.length],"dim");return;}
+    finale();return;
+  }
   line(CONF[hit]||"LA CLÉ EST JUSTE.");
   out.appendChild(runeRow(hit));
   seal(word_norm, hit);
