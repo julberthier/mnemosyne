@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>.</title>
+<style>
+  html,body{height:100%;margin:0;background:#050403}
+  body{font-family:Georgia,'Times New Roman',serif;color:#d8c9a4;cursor:default;overflow:hidden}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.20) 0 1px,transparent 1px 3px)}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(0,0,0,.82) 100%)}
+  .glow{position:fixed;left:50%;top:34%;width:120vmin;height:120vmin;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(212,175,55,.07),transparent 60%);pointer-events:none}
+  #stage{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+  #stage::-webkit-scrollbar{display:none}
+  .inner{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:6vh 10vw 9vh;box-sizing:border-box}
+  .brand{letter-spacing:.5em;font-size:12px;color:#8a7332;font-variant:small-caps;margin-bottom:4.5vh;
+    text-shadow:0 0 12px rgba(212,175,55,.3)}
+  .brand::after{content:"";display:block;width:52px;height:1px;background:rgba(212,175,55,.4);margin:10px auto 0}
+  p.rv{opacity:0;transform:translateY(6px);animation:rv 1.1s ease forwards;animation-delay:var(--d);
+    font-size:17px;line-height:1.9;letter-spacing:.045em;margin:0 0 1.7vh;max-width:740px;
+    text-shadow:0 0 8px rgba(0,0,0,.8)}
+  p.rv em{color:#f0d78c;font-style:italic}
+  p.rv .gold{color:#d4af37}
+  @keyframes rv{to{opacity:1;transform:none}}
+  body.done p.rv{animation:none;opacity:1;transform:none}
+  #gate{opacity:0;animation:rv 1.3s ease forwards;animation-delay:var(--d);margin-top:4vh}
+  body.done #gate{animation:none;opacity:1}
+  #gate a{display:inline-block;padding:15px 44px;border:1px solid rgba(212,175,55,.55);color:#f0d78c;
+    text-decoration:none;font-size:13.5px;letter-spacing:.42em;font-variant:small-caps;
+    background:rgba(212,175,55,.05);transition:all .35s ease}
+  #gate a:hover{background:rgba(212,175,55,.16);box-shadow:0 0 26px rgba(212,175,55,.35);
+    letter-spacing:.5em}
+  .wm{position:fixed;bottom:4.5vh;left:50%;transform:translateX(-50%);opacity:.10;pointer-events:none;z-index:5}
+  .wm svg{width:52px;height:62px;color:#d4af37}
+  .hintskip{position:fixed;bottom:2.6vh;right:3vw;font-size:10px;color:#3f3627;letter-spacing:.3em;
+    font-variant:small-caps;z-index:5}
+</style>
+</head>
+<body>
+<div class="scan"></div><div class="vig"></div><div class="glow"></div>
+
+<div id="stage"><div class="inner">
+  <div class="brand rv" style="--d:.3s">Le Consortium Mnémosyne</div>
+
+  <p class="rv" style="--d:1.4s">Vous voilà.</p>
+
+  <p class="rv" style="--d:2.6s">Vous avez scanné ce que d'autres ont ignoré.
+    Vous vous êtes arrêtés là où mille sont passés sans lever les yeux.
+    <em>C'est déjà rare.</em></p>
+
+  <p class="rv" style="--d:4.2s">Le monde oublie. Chaque jour, un peu plus, le savoir se dissout —
+    dans le bruit, la hâte, la paresse. Les nôtres appellent cela
+    <span class="gold">l'effondrement mnésique</span>. Nous l'appelons l'ennemi.</p>
+
+  <p class="rv" style="--d:6.0s">Il y a longtemps, nous avons mis à l'abri ce qui doit survivre.
+    Mais un verrou ne vaut que par ses gardiens. Il nous faut des esprits qui ne renoncent pas.
+    Des curieux. Des têtus. <em>Des vivants.</em></p>
+
+  <p class="rv" style="--d:7.8s">Vous avez été choisis. Non parce que vous seriez les meilleurs —
+    parce que vous savez encore être étonnés.</p>
+
+  <p class="rv" style="--d:9.6s">Neuf épreuves vous séparent du Livre des Origines.
+    Aucune consigne ne vous sera donnée. Aucune pitié non plus.
+    Ceux qui cherchent trouvent. Les autres rentrent chez eux.</p>
+
+  <p class="rv" style="--d:11.6s">Ce que vous verrez ne devra jamais quitter ces murs.</p>
+
+  <p class="rv" style="--d:13.2s"><em>Le premier pas se cache là où rien n'apparaît.</em></p>
+
+  <div id="gate" style="--d:15.0s"><a href="page-noire.html">Franchir le seuil</a></div>
+</div></div>
+
+<div class="wm"><svg viewBox="0 0 40 48"><path d="M20 6 L32 24 L20 42 L8 24 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
+<div class="hintskip">toucher l'obscurité pour tout lire</div>
+
+<script>
+var stage=document.getElementById("stage");
+var gate=document.getElementById("gate");
+function versLeSeuil(){gate.scrollIntoView({behavior:"smooth",block:"center"});}
+setTimeout(versLeSeuil,15200);
+document.addEventListener("click",function(){
+  document.body.classList.add("done");
+  setTimeout(versLeSeuil,650);
+});
+</script>
+</body>
+</html>
