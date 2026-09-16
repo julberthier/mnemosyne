@@ -167,6 +167,18 @@ function play(){
   drone.connect(dg);dg.connect(master);
   var dur=mode==="word"?(P.lead+P.n_col*dt+1.3):3.0;
   drone.start(t0);drone.stop(t0+dur);
+  /* faux poste : léger bruit blanc, passé dans le passe-bande accordé —
+     la statique se règle elle-même comme sur un vrai poste */
+  if(mode==="noise"){
+    var nlen=2*ac.sampleRate,nb=ac.createBuffer(1,nlen,ac.sampleRate),
+        nch=nb.getChannelData(0);
+    for(var z=0;z<nlen;z++)nch[z]=Math.random()*2-1;
+    var ns=ac.createBufferSource();ns.buffer=nb;ns.loop=true;
+    var ng=ac.createGain();ng.gain.value=.07;
+    ns.connect(ng);ng.connect(master);
+    ns.start(t0);ns.stop(t0+dur);
+    window.__noise=true;
+  }
   for(var i=0;i<tones.length;i++){
     var o=ac.createOscillator(),g=ac.createGain(),tn=tones[i];
     o.frequency.value=tn.f;
