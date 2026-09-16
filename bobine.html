@@ -45,9 +45,9 @@
 <div id="wrap">
   <div class="brand">La Bobine</div>
   <div class="rule"></div>
-  <div class="lore" id="lore1">LA MACHINE RÉCLAME SON SCEAU.<br>QUATRE CHIFFRES, PUIS LE SILENCE.</div>
+  <div class="lore" id="lore1">LA MACHINE RÉCLAME SON REGISTRE.<br>TROIS RELEVÉS, DANS L'ORDRE.</div>
   <div id="gate">
-    <input id="code" maxlength="4" autocomplete="off" inputmode="numeric" spellcheck="false">
+    <input id="code" maxlength="3" autocomplete="off" inputmode="numeric" spellcheck="false">
     <button id="try">SCELLER</button>
   </div>
   <div id="msg"></div>
@@ -72,19 +72,25 @@
 var K=0x5A;
 function D(h){var s="";for(var i=0;i<h.length;i+=4){s+=String.fromCharCode(parseInt(h.substr(i,4),16)^K);}return s;}
 var GRID=D("006a006b006b006b006b006b006a006a006b006b006b006b006b006a006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006a006b006b006b006b006b006a006a006b006b006b006b006b006a006a006a006a006a006a006a006a006a006a006a006a006a006a006a006b006b006b006b006b006b006b006b006b006b006b006b006b006b006a006b006a006a006a006a006a006a006b006a006a006a006a006a006a006a006b006a006a006a006a006a006a006b006a006a006a006a006a006a006a006b006a006a006a006a006a006a006b006a006a006a006b006b006b006b006b006b006b006b006b006b006b006b006b006b006a006a006a006a006a006a006a006a006a006a006a006a006a006a006b006b006b006b006b006b006b006b006b006b006b006b006b006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006a006b006b006b006b006b006a006a006b006b006b006b006b006a006a006a006a006a006a006a006a006a006a006a006a006a006a006a006b006b006b006b006b006b006b006b006b006b006b006b006b006b006b006a006a006b006a006a006b006b006a006a006b006a006a006b006b006a006a006b006a006a006b006b006a006a006b006a006a006b006b006a006a006b006a006a006b006b006a006a006b006a006a006b006b006a006a006a006a006a006b006b006a006a006a006a006a006b006a006a006a006a006a006a006a006a006a006a006a006a006a006a");
-var SEAL=D("006c006f00630062");
+var REG=D("006b006b006e00760068006a006d00760069006b0062").split(",");
 var P={"n_col": 48, "col_ms": 90, "f_base": 1000.0, "f_step": 200.0, "thick": 2, "lead": 1.2, "drone_f": 110.0, "drone_a": 0.04, "tone_a": 0.22, "f_min": 500, "f_step_dial": 50, "f_n": 100};
 var msg=document.getElementById("msg"),gate=document.getElementById("gate"),
     player=document.getElementById("player"),code=document.getElementById("code");
 document.getElementById("try").addEventListener("click",trySeal);
 code.addEventListener("keydown",function(e){if(e.key==="Enter")trySeal();});
-var ri=0;
-var REF=["LA BOBINE RESTE MUETTE.","CE SCEAU N'OUVRE RIEN.","LE CONSORTIUM ATTEND."];
+var ri=0, rstep=0;
+var REF=["CE RELEVÉ N'EST PAS DU REGISTRE.","LE REGISTRE N'A PAS CETTE PAGE.","LE CONSORTIUM ATTEND."];
 function trySeal(){
-  if(code.value.trim()===SEAL){
-    gate.style.display="none";player.style.display="block";
-    document.getElementById("lore1").style.display="none";
-    msg.textContent="LA CIRE A CÉDÉ. LA BOBINE EST LIBRE.";
+  if(code.value.trim()===REG[rstep]){
+    rstep++;
+    if(rstep<REG.length){
+      msg.textContent=rstep===1?"LE REGISTRE CONTINUE.":"LE REGISTRE SE TERMINE.";
+      code.value="";
+    }else{
+      gate.style.display="none";player.style.display="block";
+      document.getElementById("lore1").style.display="none";
+      msg.textContent="LE REGISTRE EST COMPLET. LA BOBINE EST LIBRE.";
+    }
   }else{
     msg.textContent=REF[ri++%REF.length];code.value="";
   }
