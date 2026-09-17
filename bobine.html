@@ -15,13 +15,27 @@
   .brand{letter-spacing:.5em;font-size:14px;color:#d4af37;opacity:.85;font-variant:small-caps}
   .rule{width:44px;height:1px;background:rgba(212,175,55,.4);margin:1.4vh auto}
   .lore{font-size:11.5px;color:#8a7332;letter-spacing:.16em;line-height:2.1}
-  #gate{margin-top:4vh;display:flex;gap:8px;align-items:center;justify-content:center}
-  #code{width:9ch;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.5);
-    color:#f0d78c;font-family:inherit;font-size:22px;letter-spacing:.4em;text-align:center;
-    padding:8px 10px;outline:none;text-indent:.4em}
-  #gate button{background:none;border:1px solid rgba(212,175,55,.5);color:#d4af37;
+  #gate{margin-top:3.4vh;display:flex;gap:8px;align-items:center;justify-content:center}
+  #dials{display:flex;gap:14px;align-items:center;justify-content:center;
+    background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.35);
+    border-radius:4px;padding:16px 22px}
+  .dial{display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none}
+  .dial .win{width:64px;height:76px;overflow:hidden;position:relative;
+    border:1px solid rgba(212,175,55,.5);border-radius:3px;background:#0a0806}
+  .dial .col{position:absolute;left:0;right:0;top:0;transition:top .22s cubic-bezier(.4,0,.2,1)}
+  .dial .col div{height:76px;line-height:76px;text-align:center;
+    font-size:30px;color:#d4af37;letter-spacing:.05em}
+  .dial .win::after{content:"";position:absolute;left:6px;right:6px;top:34px;height:8px;
+    border-top:1px solid rgba(212,175,55,.65);border-bottom:1px solid rgba(212,175,55,.65);
+    pointer-events:none}
+  .dial .lab{font-size:9px;color:#8a7332;letter-spacing:.3em}
+  #dials .sep{font-size:30px;color:#8a7332;padding:0 2px}
+  .up,.dn{background:none;border:1px solid rgba(212,175,55,.4);color:#d4af37;
+    font-family:inherit;font-size:14px;width:64px;padding:4px 0;cursor:pointer;letter-spacing:.2em}
+  .up:hover,.dn:hover{background:rgba(212,175,55,.12)}
+  #try{background:none;border:1px solid rgba(212,175,55,.5);color:#d4af37;
     font-family:inherit;font-size:12px;letter-spacing:.22em;padding:10px 16px;cursor:pointer}
-  #gate button:hover{background:rgba(212,175,55,.12)}
+  #try:hover{background:rgba(212,175,55,.12)}
   #msg{margin-top:2.2vh;font-size:13px;letter-spacing:.2em;color:#8a7332;min-height:1.6em}
   #player{display:none;margin-top:2.6vh;width:100%;max-width:940px}
   #tuner{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:1.2vh}
@@ -45,10 +59,31 @@
 <div id="wrap">
   <div class="brand">La Bobine</div>
   <div class="rule"></div>
-  <div class="lore" id="lore1">LA MACHINE RÉCLAME SON REGISTRE.<br>TROIS RELEVÉS, DANS L'ORDRE.</div>
+  <div class="lore" id="lore1">LA MACHINE RÉCLAME SON REGISTRE.<br>TROIS RELEVÉS, DANS L'ORDRE. ALIGNEZ. POUSSEZ.</div>
   <div id="gate">
-    <input id="code" maxlength="3" autocomplete="off" inputmode="numeric" spellcheck="false">
-    <button id="try">SCELLER</button>
+    <div id="dials">
+      <div class="dial" data-d="0">
+        <button class="up">▲</button>
+        <div class="win"><div class="col"></div></div>
+        <button class="dn">▼</button>
+        <div class="lab">PREMIER</div>
+      </div>
+      <div class="sep">·</div>
+      <div class="dial" data-d="1">
+        <button class="up">▲</button>
+        <div class="win"><div class="col"></div></div>
+        <button class="dn">▼</button>
+        <div class="lab">SECOND</div>
+      </div>
+      <div class="sep">·</div>
+      <div class="dial" data-d="2">
+        <button class="up">▲</button>
+        <div class="win"><div class="col"></div></div>
+        <button class="dn">▼</button>
+        <div class="lab">TROISIÈME</div>
+      </div>
+    </div>
+    <button id="try">POUSSER</button>
   </div>
   <div id="msg"></div>
   <div id="player">
@@ -75,26 +110,63 @@ var GRID=D("006a006b006b006b006b006b006a006a006b006b006b006b006b006a006b006a006a
 var REG=D("006b006b006e00760068006a006d00760069006b0062").split(",");
 var P={"n_col": 48, "col_ms": 90, "f_base": 1000.0, "f_step": 200.0, "thick": 2, "lead": 1.2, "drone_f": 110.0, "drone_a": 0.04, "tone_a": 0.22, "f_min": 500, "f_step_dial": 50, "f_n": 100};
 var msg=document.getElementById("msg"),gate=document.getElementById("gate"),
-    player=document.getElementById("player"),code=document.getElementById("code");
-document.getElementById("try").addEventListener("click",trySeal);
-code.addEventListener("keydown",function(e){if(e.key==="Enter")trySeal();});
-var ri=0, rstep=0;
-var REF=["CE RELEVÉ N'EST PAS DU REGISTRE.","LE REGISTRE N'A PAS CETTE PAGE.","LE CONSORTIUM ATTEND."];
-function trySeal(){
-  if(code.value.trim()===REG[rstep]){
-    rstep++;
-    if(rstep<REG.length){
-      msg.textContent=rstep===1?"LE REGISTRE CONTINUE.":"LE REGISTRE SE TERMINE.";
-      code.value="";
-    }else{
-      gate.style.display="none";player.style.display="block";
-      document.getElementById("lore1").style.display="none";
-      msg.textContent="LE REGISTRE EST COMPLET. LA BOBINE EST LIBRE.";
+    player=document.getElementById("player");
+/* ---- le verrou à trois molettes : registre d'archive ---- */
+var CATALOG=D("006a006a006d0076006a006800690076006a006f006b0076006a006200620076006b006b006e0076006b006e00630076006b006d006c00760068006a006d00760068006e006900760068006c0062007600680063006f00760069006b006200760069006f00680076006900620063").split(",");
+var pos=[0,0,0], dials=document.querySelectorAll(".dial");
+function fillDials(){
+  for(var i=0;i<dials.length;i++){
+    var col=dials[i].querySelector(".col"), html="";
+    for(var j=0;j<CATALOG.length;j++){
+      html+="<div>"+CATALOG[j]+"</div>";
     }
-  }else{
-    msg.textContent=REF[ri++%REF.length];code.value="";
+    col.innerHTML=html;
+  }
+  showDials();
+}
+function showDials(){
+  for(var i=0;i<dials.length;i++){
+    dials[i].querySelector(".col").style.top=(-pos[i]*76)+"px";
+  }
+  window.__pos=[CATALOG[pos[0]],CATALOG[pos[1]],CATALOG[pos[2]]];
+}
+function aligned(){return pos[0]===4?(pos[1]===7?(pos[2]===11?true:false):false):false;}
+function spin(i,dir){
+  pos[i]=(pos[i]+dir+CATALOG.length)%CATALOG.length;
+  showDials();
+  if(aligned()){
+    setTimeout(function(){unlock();},450);
   }
 }
+for(var di=0;di<dials.length;di++){
+  (function(i){
+    dials[i].querySelector(".up").addEventListener("click",function(){spin(i,-1);});
+    dials[i].querySelector(".dn").addEventListener("click",function(){spin(i,1);});
+    /* molette aussi à la molette de souris et au clavier */
+    dials[i].addEventListener("wheel",function(e){e.preventDefault();spin(i,e.deltaY>0?1:-1);},{passive:false});
+    dials[i].setAttribute("tabindex","0");
+    dials[i].addEventListener("keydown",function(e){
+      if(e.key==="ArrowUp"){e.preventDefault();spin(i,-1);}
+      if(e.key==="ArrowDown"){e.preventDefault();spin(i,1);}
+    });
+  })(di);
+}
+var ri=0;
+var REF=["LE REGISTRE RESISTE.","CES PAGES NE S'ALIGNENT PAS.","LE CONSORTIUM ATTEND."];
+function trySeal(){
+  var attempt=CATALOG[pos[0]]+"·"+CATALOG[pos[1]]+"·"+CATALOG[pos[2]];
+  if(aligned()){unlock();return;}
+  msg.textContent=REF[ri++%REF.length]+" ("+attempt+")";
+}
+function unlock(){
+  if(gate.style.display==="none")return;
+  gate.style.display="none";player.style.display="block";
+  document.getElementById("lore1").style.display="none";
+  msg.textContent="LE REGISTRE EST ALIGNÉ. LA BOBINE EST LIBRE.";
+  window.__unlocked=true;
+}
+fillDials();
+document.getElementById("try").addEventListener("click",trySeal);
 
 /* ---- le poste : 100 fréquences, une seule porte le mot ---- */
 var FI=0;                                    /* index 0..99 */
