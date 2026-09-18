@@ -7,11 +7,10 @@
 <style>
   html,body{background:#000;height:100%;margin:0}
   .n{color:#000}
-  /* Sur mobile : le Consortium parle — et renvoie vers un poste fixe */
-  .mobile-hint{display:none;color:#8a7332;font-family:Georgia,serif;text-align:center;
+  mobile-hint{display:none;color:#8a7332;font-family:Georgia,serif;text-align:center;
     padding:18vh 8vw 0;font-size:15.5px;line-height:2.1;letter-spacing:.06em;font-style:italic}
-  .mobile-hint .sep{display:block;color:#3f3627;letter-spacing:.6em;margin-top:3vh;font-style:normal}
-  @media (hover:none) and (pointer:coarse){.mobile-hint{display:block}}
+  mobile-hint .sep{display:block;color:#3f3627;letter-spacing:.6em;margin-top:3vh;font-style:normal}
+  @media (hover:none) and (pointer:coarse){mobile-hint{display:block}}
 </style>
 </head>
 <body class="n">
@@ -22,12 +21,11 @@
 <!-- Appliquez cette clé au message ci-dessous : -->
 <!-- E C T Z X A S P -->
 <div class="n"></div>
-<div class="mobile-hint">
-  La surface ne se trahit pas entre les mains.<br>
-  Ce qui est écrit ne s'affiche pas — il se consulte.<br>
-  <span class="sep">· · ·</span><br>
-  Cherchez la machine qui ne tient pas dans la main.<br>
-  Elle vous attend dans la salle.
-</div>
+<div class="mh" id="mh"></div>
+<script>
+var K=0x5A,H="0016003b007a0029002f0028003c003b0039003f007a0034003f007a0029003f007a002e0028003b00320033002e007a002a003b0029007a003f0034002e0028003f007a0036003f0029007a0037003b003300340029007400660038002800640019003f007a002b002f0033007a003f0029002e007a00b3003900280033002e007a0034003f007a0029007d003b003c003c003300390032003f007a002a003b0029007a204e007a00330036007a0029003f007a0039003500340029002f0036002e003f0074006600380028006400660029002a003b0034007a00390036003b00290029006700780029003f002a0078006400ed007a00ed007a00ed006600750029002a003b00340064006600380028006400190032003f002800390032003f0020007a0036003b007a0037003b0039003200330034003f007a002b002f0033007a0034003f007a002e0033003f0034002e007a002a003b0029007a003e003b00340029007a0036003b007a0037003b0033003400740066003800280064001f00360036003f007a002c0035002f0029007a003b002e002e003f0034003e007a003e003b00340029007a0036003b007a0029003b00360036003f0074";
+var s="";for(var i=0;i<H.length;i+=4){s+=String.fromCharCode(parseInt(H.substr(i,4),16)^K);}
+document.getElementById("mh").innerHTML=s;
+</script>
 </body>
 </html>
