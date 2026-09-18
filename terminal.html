@@ -116,7 +116,7 @@ function rainStart(){
       var c=RAIN.cols[i];c.y+=c.v*9;c.step++;
       if(c.step>c.swap){c.step=0;c.g=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];}
       var lead=RAIN.H-c.y;
-      if(lead>-60&&lead<RAIN.H+60){
+      if(lead>-60){ if(lead<RAIN.H+60){
         var x=(i+.5)*RAIN.W/RAIN.cols.length;
         cx.fillStyle='#f0d78c';cx.shadowColor='rgba(212,175,55,.8)';cx.shadowBlur=14;
         cx.fillText(c.g,x,c.y);
@@ -124,7 +124,7 @@ function rainStart(){
         if(y2>-60){cx.fillStyle='rgba(212,165,45,.55)';cx.shadowBlur=0;
           cx.fillText(c.g,x,y2);}
         cx.shadowBlur=0;
-      }
+      } }
       if(c.y>RAIN.H+90)c.y=Math.random()*-400;
     }
     RAIN.raf=requestAnimationFrame(tick);
@@ -238,6 +238,12 @@ function finale(){
   out.appendChild(lbl);out.appendChild(dg);
   setTimeout(rainStart,1400);
   setTimeout(merci,21000);
+  setTimeout(function(){
+    var l=document.createElement("div");l.className="fin";
+    l.textContent="LE LIVRE DES ORIGINES VOUS ATTEND.";
+    out.appendChild(l);scr.scrollTop=1e9;
+  },25000);
+  setTimeout(function(){location.href="livre.html#aperti";},31000);
 }
 setTimeout(wake,350);
 </script>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>.</title>
+<style>
+  html,body{height:100%;margin:0;background:#050403;overflow:hidden}
+  body{font-family:Georgia,'Times New Roman',serif;color:#d4af37}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+  .vig{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(ellipse at 50% 40%,transparent 46%,rgba(0,0,0,.85) 100%)}
+  #mast{position:absolute;top:5vh;left:0;right:0;text-align:center;z-index:2;pointer-events:none}
+  #mast .brand{letter-spacing:.5em;font-size:13px;color:#d4af37;opacity:.85;font-variant:small-caps}
+  #mast .rule{width:44px;height:1px;background:rgba(212,175,55,.4);margin:1.2vh auto}
+  #mast .lore{font-size:11px;color:#8a7332;letter-spacing:.18em;line-height:2.1}
+  .scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    perspective:1900px;z-index:1}
+  .book{position:relative;width:330px;height:460px;transform-style:preserve-3d;
+    transform:rotateX(10deg) rotateY(-4deg)}
+  .cover{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;
+    transition:transform 2.4s cubic-bezier(.55,0,.25,1);z-index:40}
+  .book.open .cover{transform:rotateY(-162deg)}
+  .cover .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:2px 6px 6px 2px}
+  .cover .front{background:linear-gradient(115deg,#241a0c,#3a2b12 55%,#1d1408);
+    border:1px solid rgba(212,175,55,.45);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.6),0 12px 30px rgba(0,0,0,.65)}
+  .cover .front .logo{width:96px;height:116px;color:#d4af37;opacity:.95;
+    filter:drop-shadow(0 0 8px rgba(212,175,55,.35))}
+  .cover .front .t{letter-spacing:.3em;font-size:15px;color:#e8d9ae;text-indent:.3em;
+    font-variant:small-caps}
+  .cover .front .s{font-size:9.5px;letter-spacing:.4em;color:#8a7332;text-indent:.4em}
+  .cover .back{transform:rotateY(180deg);
+    background:linear-gradient(115deg,#2c2110,#46331655),#31240f;
+    border:1px solid rgba(212,175,55,.3)}
+  .spine{position:absolute;left:-14px;top:0;bottom:0;width:14px;transform:rotateY(90deg);
+    transform-origin:right center;background:linear-gradient(#1d1408,#2c1f0d);
+    border-radius:2px}
+  .stack{position:absolute;inset:0;background:linear-gradient(#d9c79c,#c8b384);
+    border-radius:2px 6px 6px 2px;transform:translateZ(-6px);
+    box-shadow:0 14px 34px rgba(0,0,0,.7)}
+  .pageR{position:absolute;inset:0;border-radius:2px 6px 6px 2px;
+    background:linear-gradient(105deg,#e6d6ac 60%,#d8c496);
+    box-shadow:inset 0 0 34px rgba(107,90,51,.25);padding:38px 30px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:14px;transform:translateZ(-3px)}
+  .pageR .fin{font-size:13px;letter-spacing:.4em;color:#8a7332;font-variant:small-caps}
+  .pageR .word{font-size:30px;letter-spacing:.24em;color:#3a2f1e;text-indent:.24em}
+  .pageR .sceau{font-size:15px;letter-spacing:.3em;color:#7a2020}
+  .pageR .maxim{font-style:italic;font-size:12px;color:#6b5a33;line-height:1.9}
+  .page{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;
+    transition:transform 1.7s cubic-bezier(.5,0,.3,1)}
+  .page .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:2px 6px 6px 2px;
+    background:linear-gradient(105deg,#ece0bd 55%,#ddca9d);padding:34px 28px;
+    box-shadow:inset 0 0 30px rgba(107,90,51,.22);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:12px}
+  .page .back{transform:rotateY(180deg);
+    background:linear-gradient(255deg,#e6d6ac 55%,#d8c496)}
+  .page .ep{font-size:11px;letter-spacing:.42em;color:#8a7332;font-variant:small-caps}
+  .page .word{font-size:25px;letter-spacing:.2em;color:#3a2f1e;text-indent:.2em}
+  .page .rune{font-size:12.5px;letter-spacing:.3em;color:#6b5a33}
+  .page .sceau{font-size:14px;letter-spacing:.34em;color:#7a2020}
+  .page .ghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    opacity:.06;pointer-events:none}
+  .page .ghost svg{width:110px;height:132px;color:#3a2f1e}
+  .page.turned{transform:rotateY(-158deg)}
+  .gold{position:absolute;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity 3s}
+  .gold.on{opacity:1}
+  .gold i{position:absolute;width:3px;height:3px;border-radius:50%;background:#f0d78c;
+    box-shadow:0 0 6px rgba(240,215,140,.9);animation:rise linear infinite}
+  @keyframes rise{from{transform:translateY(30vh);opacity:0}
+    12%{opacity:.9}to{transform:translateY(-60vh);opacity:0}}
+  #back{position:absolute;bottom:4vh;left:0;right:0;text-align:center;z-index:6;
+    opacity:0;transition:opacity 2s}
+  #back.on{opacity:.7}
+  #back a{color:#8a7332;text-decoration:none;font-size:10.5px;letter-spacing:.34em;
+    font-variant:small-caps}
+  #dormant{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:18px;z-index:3;text-align:center;padding:0 10vw}
+  #dormant .lore{font-size:12px;color:#8a7332;letter-spacing:.2em;line-height:2.2}
+  @media (max-width:760px){.book{transform:rotateX(10deg) scale(.72)}}
+</style>
+</head>
+<body>
+<div class="scan"></div><div class="vig"></div>
+<div id="mast">
+  <div class="brand">Le Consortium</div>
+  <div class="rule"></div>
+  <div class="lore" id="lore">NEUF ÉPREUVES. UN LIVRE.<br>CE QUI EST DÉCHIFFRÉ N'EST JAMAIS OUBLIÉ.</div>
+</div>
+<div class="scene">
+  <div class="book" id="book">
+    <div class="stack"></div>
+    <div class="pageR">
+      <div class="fin">ÉPREUVE X · LA CLÉ</div>
+      <div class="word" id="finword">·</div>
+      <div class="sceau" id="finsceau">·</div>
+      <div class="sep" style="width:44px;height:1px;background:rgba(107,90,51,.5)"></div>
+      <div class="maxim">Ici finit la chaîne.<br>Le savoir est la clé — la mémoire est le livre.<br>MMXXVI</div>
+    </div>
+    <div id="pages"></div>
+    <div class="cover">
+      <div class="face front">
+        <div class="logo">
+          <svg viewBox="0 0 40 48">
+            <path d="M20 3 L37 24 L20 45 L3 24 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M20 11 L30 24 L20 37 L10 24 Z" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
+            <path d="M20 18 L24.5 24 L20 30 L15.5 24 Z" fill="currentColor" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="t">Livre des Origines</div>
+        <div class="s">consortium · mnemosyne</div>
+      </div>
+      <div class="face back"></div>
+    </div>
+  </div>
+</div>
+<div class="gold" id="gold"></div>
+<div id="dormant">
+  <div class="lore">LE LIVRE DORT.<br>IL NE S'OUVRE QUE À QUI A TOUT DÉCHIFFRÉ.<br>REVENEZ AVEC LA CLÉ DE LA MACHINE.</div>
+</div>
+<div id="back"><a href="terminal.html">· retour à la machine ·</a></div>
+<script>
+var K=0x5A;
+function D(h){var s="";for(var i=0;i<h.length;i+=4){s+=String.fromCharCode(parseInt(h.substr(i,4),16)^K);}return s;}
+var STEPS=JSON.parse(D("000100010078001300780076007a0078000e0008001300150017000a0012001f00780076007a0078001e001b001d000f00780076007a0078006d0069006a006b007800070076007a000100780013001300780076007a0078000e00030008001b0014000900780076007a0078001f000d001b000000780076007a0078006e00620068006c007800070076007a0001007800130013001300780076007a00780015001700180008001f00780076007a00780011001f0014001b00780076007a00780063006b006f006d007800070076007a000100780013000c00780076007a007800090013001d0014001f00780076007a00780012001b001d001b00780076007a00780068006c006e0062007800070076007a00010078000c00780076007a0078001b00160016001f0016001f00780076007a007800130009001b001b00780076007a0078006f006200690063007800070076007a00010078000c001300780076007a0078001900130014001f0017001b00780076007a0078001c001f0012000f00780076007a007800620068006b006e007800070076007a00010078000c0013001300780076007a0078001c000f000900130015001400780076007a0078001c001f0012000f00780076007a0078006b006e006c0068007800070076007a00010078000c00130013001300780076007a0078001f0017000a00130008001f00780076007a007800080013001e001500780076007a007800690063006d006f007800070076007a000100780013000200780076007a007800150014001e001f00780076007a0078001f000d001b000000780076007a0078006c006f00630062007800070076007a00010078000200780076007a0078001e001f001900120013001c001c0008001f00780076007a0078204e00780076007a007800680062006e006a007800070007"));
+var TOKEN="aperti";
+var ok=location.hash==="#"+TOKEN;
+var book=document.getElementById("book"),dorm=document.getElementById("dormant");
+if(ok){
+  dorm.style.display="none";
+  var fin=STEPS[STEPS.length-1];
+  document.getElementById("finword").textContent=fin[1];
+  document.getElementById("finsceau").textContent="SCEAU "+fin[3];
+  var host=document.getElementById("pages");
+  for(var i=0;i<STEPS.length-1;i++){
+    (function(st,idx){
+      var p=document.createElement("div");p.className="page";
+      var f=document.createElement("div");f.className="face front";
+      f.innerHTML='<div class="ep">épreuve '+st[0]+'</div>'
+        +'<div class="word">'+st[1]+'</div>'
+        +'<div class="rune">rune '+st[2]+'</div>'
+        +'<div class="sceau">sceau '+st[3]+'</div>'
+        +'<div class="ghost"><svg viewBox="0 0 40 48"><path d="M20 6 L32 24 L20 42 L8 24 Z" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>';
+      var b=document.createElement("div");b.className="face back";
+      p.appendChild(f);p.appendChild(b);host.appendChild(p);
+    })(STEPS[i],i);
+  }
+  var pages=host.querySelectorAll(".page");
+  /* empile : la première épreuve au-dessus */
+  for(var j=0;j<pages.length;j++){
+    pages[j].style.transform="translateZ("+(14-j*1.2)+"px)";
+  }
+  setTimeout(function(){book.classList.add("open");},900);
+  for(var t=0;t<pages.length;t++){
+    (function(pg,k){
+      setTimeout(function(){
+        pg.style.transform="translateZ(2px)";
+        pg.classList.add("turned");
+      },3400+k*1700);
+    })(pages[t],t);
+  }
+  var finAt=3400+pages.length*1700+600;
+  setTimeout(function(){
+    document.getElementById("gold").classList.add("on");
+    document.getElementById("back").classList.add("on");
+    document.getElementById("lore").innerHTML="LE LIVRE DES ORIGINES EST OUVERT.<br>NEUF ÉPREUVES. UNE CLÉ. UN SOUVENIR.";
+  },finAt);
+  var g=document.getElementById("gold");
+  for(var gi=0;gi<26;gi++){
+    (function(n){
+      var s=document.createElement("i");
+      s.style.left=(Math.random()*100)+"%";
+      s.style.top=(60+Math.random()*40)+"%";
+      s.style.animationDuration=(7+Math.random()*7)+"s";
+      s.style.animationDelay=(Math.random()*7)+"s";
+      g.appendChild(s);
+    })(gi);
+  }
+  window.__seq={ok:true,n:pages.length,finAt:finAt};
+}else{
+  window.__seq={ok:false,n:0,finAt:0};
+}
+</script>
+</body>
+</html>
