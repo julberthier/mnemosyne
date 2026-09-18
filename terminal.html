@@ -142,6 +142,8 @@ function merci(){
   setTimeout(function(){d.classList.add('show');},80);
 }
 var EARLY=["LE DERNIER FILM N'A PAS ENCORE ÉTÉ TROUVÉ.", "LA BOBINE FINALE MANQUE À L'APPEL.", "REVENEZ AVEC TOUT. OU RIEN."];
+var STONES=D("001e001b001d000f007a001f000d001b0000007a0011001f0014001b007a0012001b001d001b007a00130009001b001b007a001c001f0012000f007a001c001f0012000f007a00080013001e0015007a001f000d001b0000");
+var stones=false;
 function codeOf(w){for(var i=0;i<CODES.length;i++){if(D(CODES[i][0])===w)return D(CODES[i][1]);}return null;}
 function romanOf(w){for(var i=0;i<CODES.length;i++){if(D(CODES[i][0])===w)return ROMAN[i];}return "";}
 function runeRow(word){
@@ -180,12 +182,33 @@ ghost.addEventListener("keydown",function(e){
   for(var i=0;i<PAIRS.length;i++){
     if(D(PAIRS[i][0])===word_norm){hit=D(PAIRS[i][1]);break;}
   }
-  if(hit===null){line(REF[ri++%REF.length]);return;}
-  if(hit==="")
-  {
-    if(seen<9){line(EARLY[ei++%EARLY.length],"dim");return;}
-    finale();return;
+  if(hit===""){
+    if(seen>=9){finale();return;}
+    if(!stones){
+      stones=true;
+      line(EARLY[ei++%EARLY.length],"dim");
+      line("LES NEUF PIERRES PARLENT. DONNEZ LEURS NOMS, DANS L'ORDRE DU LIVRE.");
+      return;
+    }
   }
+  else if(stones?(hit!==null):false){
+    /* une saisie qui est un mot connu reprend la progression normale */
+    stones=false;
+    line(CONF[hit]||"LA CLÉ EST JUSTE.");
+    out.appendChild(runeRow(hit));
+    seal(word_norm, hit);
+    seen++;
+    if(seen===1){line("· · ·","dim");}
+    return;
+  }
+  if(stones){
+    var guess=word_norm.replace(/[^A-Z ]/g," ").replace(/\s+/g," ").trim();
+    if(guess===STONES){finale();return;}
+    stones=false;
+    line("LES PIERRES RESTENT MUETTES. UN JOUR, ELLES SE RÉVEILLERONT.","dim");
+    return;
+  }
+  if(hit===null){line(REF[ri++%REF.length]);return;}
   line(CONF[hit]||"LA CLÉ EST JUSTE.");
   out.appendChild(runeRow(hit));
   seal(word_norm, hit);
